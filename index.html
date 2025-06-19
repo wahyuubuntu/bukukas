@@ -39,15 +39,26 @@
   </div>
 
   <div class="max-w-xl w-full bg-white shadow-xl rounded-2xl p-6 space-y-6">
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between flex-wrap gap-3">
       <div class="flex items-center gap-2 text-purple-700 text-2xl font-bold">
         <i data-lucide="book-open-check" class="w-6 h-6"></i>
         Buku Kas
       </div>
-      <a href="laporan.html" class="text-purple-600 hover:text-purple-800 flex items-center gap-1 text-sm border px-2 py-1 rounded border-purple-300 hover:bg-purple-100 transition">
+    </div>
+
+    <!-- Tombol Action -->
+    <div class="flex flex-wrap sm:flex-nowrap gap-2">
+      <a href="laporan.html" class="flex-1 sm:flex-none text-center text-purple-600 hover:text-purple-800 flex items-center justify-center gap-1 text-sm border px-2 py-2 rounded border-purple-300 hover:bg-purple-100 transition">
         <i data-lucide="file-text" class="w-4 h-4"></i>
         Laporan
       </a>
+      <button id="backupBtn" class="flex-1 sm:flex-none bg-green-500 hover:bg-green-600 text-white px-2 py-2 rounded text-sm flex items-center justify-center gap-1">
+        <i data-lucide="download" class="w-4 h-4"></i> Backup
+      </button>
+      <label class="flex-1 sm:flex-none bg-yellow-500 hover:bg-yellow-600 text-white px-2 py-2 rounded text-sm cursor-pointer flex items-center justify-center gap-1">
+        <i data-lucide="upload" class="w-4 h-4"></i> Import
+        <input type="file" id="importFile" accept=".json" class="hidden" />
+      </label>
     </div>
 
     <!-- Form Input -->
@@ -63,7 +74,8 @@
         <option value="keluar">Keluar</option>
       </select>
       <button type="submit" class="w-full bg-purple-500 hover:bg-purple-600 text-white p-2 rounded-lg flex items-center justify-center gap-2">
-        <i data-lucide="plus-circle" class="w-5 h-5"></i> Tambah Transaksi
+        <i data-lucide="plus-circle" class="w-5 h-5"></i> 
+        <span id="formBtnText">Tambah Transaksi</span>
       </button>
     </form>
 
@@ -81,6 +93,7 @@
   <script>
     lucide.createIcons();
 
+    // PWA
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
         .then(reg => console.log('Service Worker registered', reg))
@@ -91,14 +104,12 @@
     const installBanner = document.getElementById('installBanner');
     const installBtn = document.getElementById('installBtn');
     const closeBtn = document.getElementById('closeBanner');
-
     const hideUntil = localStorage.getItem('hideInstallUntil');
     const now = new Date();
 
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-
       if (!hideUntil || new Date(hideUntil) < now) {
         installBanner.classList.remove('-translate-y-full');
       }
@@ -118,10 +129,46 @@
 
     closeBtn.addEventListener('click', () => {
       installBanner.classList.add('-translate-y-full');
-      // Sembunyikan selama 5 menit
       const hideUntilDate = new Date();
       hideUntilDate.setMinutes(hideUntilDate.getMinutes() + 5);
       localStorage.setItem('hideInstallUntil', hideUntilDate.toISOString());
+    });
+
+    // === BACKUP ===
+    document.getElementById('backupBtn').addEventListener('click', () => {
+      const data = localStorage.getItem('transaksiKas') || '[]';
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'buku_kas_backup.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    // === IMPORT ===
+    document.getElementById('importFile').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        try {
+          const importedData = JSON.parse(event.target.result);
+          if (!Array.isArray(importedData)) {
+            alert('Data tidak valid!');
+            return;
+          }
+          localStorage.setItem('transaksiKas', JSON.stringify(importedData));
+          alert('Data berhasil diimpor! Halaman akan dimuat ulang.');
+          location.reload();
+        } catch (err) {
+          alert('Gagal mengimpor data: Format file tidak valid.');
+        }
+      };
+      reader.readAsText(file);
     });
   </script>
 </body>
