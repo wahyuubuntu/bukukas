@@ -1,0 +1,70 @@
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Buku Kas</title>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#7c3aed" />
+
+  <!-- Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <!-- JS -->
+  <script src="script.js" defer></script>
+</head>
+<body class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen flex items-center justify-center p-4">
+
+  <div class="max-w-xl w-full bg-white shadow-xl rounded-2xl p-6 space-y-6">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2 text-purple-700 text-2xl font-bold">
+        <i data-lucide="book-open-check" class="w-6 h-6"></i>
+        Buku Kas
+      </div>
+      <a href="laporan.html" class="text-purple-600 hover:text-purple-800 flex items-center gap-1 text-sm border px-2 py-1 rounded border-purple-300 hover:bg-purple-100 transition">
+        <i data-lucide="file-text" class="w-4 h-4"></i>
+        Laporan
+      </a>
+    </div>
+
+    <!-- Form Input -->
+    <form id="kasForm" class="space-y-3">
+      <input type="text" id="keterangan" placeholder="Keterangan" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+      <div class="grid grid-cols-2 gap-2">
+        <input type="number" id="jumlahBarang" placeholder="Jumlah Barang" class="p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+        <input type="number" id="hargaSatuan" placeholder="Harga Satuan" class="p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" required />
+      </div>
+      <input type="date" id="tanggal" class="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" />
+      <select id="kategori" class="w-full p-2 border rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-purple-400">
+        <option value="masuk">Masuk</option>
+        <option value="keluar">Keluar</option>
+      </select>
+      <button type="submit" class="w-full bg-purple-500 hover:bg-purple-600 text-white p-2 rounded-lg flex items-center justify-center gap-2">
+        <i data-lucide="plus-circle" class="w-5 h-5"></i> Tambah Transaksi
+      </button>
+    </form>
+
+    <!-- Saldo -->
+    <div id="saldo" class="text-center text-lg font-semibold bg-purple-50 border border-purple-200 p-3 rounded-lg text-purple-700">
+      Saldo: Rp 0
+    </div>
+
+    <!-- Daftar Transaksi -->
+    <ul id="transaksiList" class="space-y-3">
+      <!-- transaksi akan muncul di sini -->
+    </ul>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('Service Worker registered', reg))
+        .catch(err => console.error('Service Worker failed', err));
+    }
+  </script>
+</body>
+</html>

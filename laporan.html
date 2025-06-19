@@ -1,0 +1,90 @@
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Laporan Buku Kas</title>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#7c3aed" />
+
+  <!-- Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- html2pdf untuk Export -->
+  <script src="html2pdf.bundle.min.js"></script>
+
+  <!-- JS laporan -->
+  <script src="laporan.js" defer></script>
+</head>
+<body class="bg-gray-100 p-6">
+  <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow space-y-6">
+    <!-- Tombol Kembali -->
+    <div class="mb-4">
+      <a href="index.html" class="inline-flex items-center text-sm text-purple-600 hover:text-purple-800 transition">
+        <i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> Kembali ke Buku Kas
+      </a>
+    </div>
+
+    <!-- Header dan Export -->
+    <div class="flex justify-between items-center">
+      <h1 class="text-xl font-bold flex items-center gap-2 text-purple-600">
+        <i data-lucide="file-text"></i> Laporan Buku Kas
+      </h1>
+      <button onclick="exportPDF()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded flex gap-1 items-center">
+        <i data-lucide="download"></i> Export PDF
+      </button>
+    </div>
+
+    <!-- Filter -->
+    <div class="grid sm:grid-cols-3 gap-3">
+      <div>
+        <label class="block text-sm font-medium">Tanggal Mulai</label>
+        <input type="date" id="startDate" class="w-full p-2 border rounded" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium">Tanggal Akhir</label>
+        <input type="date" id="endDate" class="w-full p-2 border rounded" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium">Kategori</label>
+        <select id="filterKategori" class="w-full p-2 border rounded">
+          <option value="">Semua</option>
+          <option value="masuk">Masuk</option>
+          <option value="keluar">Keluar</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Tabel Laporan -->
+    <div id="laporanContainer">
+      <table class="w-full border mt-4 text-sm text-left">
+        <thead class="bg-purple-100 text-purple-700">
+          <tr>
+            <th class="p-2 border">Tanggal</th>
+            <th class="p-2 border">Keterangan</th>
+            <th class="p-2 border">Kategori</th>
+            <th class="p-2 border">Qty</th>
+            <th class="p-2 border">Harga</th>
+            <th class="p-2 border">Total</th>
+          </tr>
+        </thead>
+        <tbody id="laporanBody" class="bg-white">
+          <!-- data akan diisi oleh JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('Service Worker registered', reg))
+        .catch(err => console.error('Service Worker failed', err));
+    }
+  </script>
+</body>
+</html>
