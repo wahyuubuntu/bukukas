@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
@@ -15,8 +16,27 @@
 
   <!-- JS -->
   <script src="script.js" defer></script>
+
+  <style>
+    @keyframes slideDown {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(0); }
+    }
+    .animate-slideDown {
+      animation: slideDown 0.4s ease-out forwards;
+    }
+  </style>
 </head>
 <body class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen flex items-center justify-center p-4">
+
+  <!-- Install Banner -->
+  <div id="installBanner" class="fixed top-0 inset-x-0 flex justify-center z-50 transition-transform transform -translate-y-full">
+    <div class="bg-purple-600 text-white px-4 py-2 rounded-b-lg shadow flex items-center gap-3 animate-slideDown">
+      <span>Install Aplikasi Buku Kas</span>
+      <button id="installBtn" class="bg-white text-purple-600 px-3 py-1 rounded hover:bg-purple-100 text-sm font-medium">Pasang</button>
+      <button id="closeBanner" class="ml-2 text-white hover:text-gray-300">&times;</button>
+    </div>
+  </div>
 
   <div class="max-w-xl w-full bg-white shadow-xl rounded-2xl p-6 space-y-6">
     <div class="flex items-center justify-between">
@@ -60,11 +80,42 @@
 
   <script>
     lucide.createIcons();
+
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
         .then(reg => console.log('Service Worker registered', reg))
         .catch(err => console.error('Service Worker failed', err));
     }
+
+    let deferredPrompt;
+    const installBanner = document.getElementById('installBanner');
+    const installBtn = document.getElementById('installBtn');
+    const closeBtn = document.getElementById('closeBanner');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (!localStorage.getItem('hideInstallBanner')) {
+        installBanner.classList.remove('-translate-y-full');
+      }
+    });
+
+    installBtn.addEventListener('click', () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choice) => {
+          if (choice.outcome === 'accepted') {
+            console.log('PWA diinstal');
+            installBanner.remove();
+          }
+        });
+      }
+    });
+
+    closeBtn.addEventListener('click', () => {
+      installBanner.classList.add('-translate-y-full');
+      localStorage.setItem('hideInstallBanner', 'true');
+    });
   </script>
 </body>
 </html>
