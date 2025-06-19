@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Laporan Buku Kas</title>
 
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#7c3aed" />
 
   <!-- Tailwind CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -18,7 +18,30 @@
   <script src="html2pdf.bundle.min.js"></script>
 
   <!-- JS laporan -->
-  <script src="laporan.js" defer></script>
+  <script defer>
+    function exportPDF() {
+      const element = document.getElementById('laporanExport');
+      const opt = {
+        margin: 0.5,
+        filename: 'Laporan_Buku_Kas.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+
+      html2pdf().from(element).set(opt).save();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+    });
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(reg => console.log('Service Worker registered', reg))
+        .catch(err => console.error('Service Worker failed', err));
+    }
+  </script>
 </head>
 <body class="bg-gray-100 p-6">
   <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow space-y-6">
@@ -30,14 +53,19 @@
       </a>
     </div>
 
-    <!-- Header dan Export -->
+    <!-- Header dan Tombol Export -->
     <div class="flex justify-between items-center flex-wrap gap-2">
       <h1 class="text-xl font-bold flex items-center gap-2 text-purple-600">
         <i data-lucide="file-text"></i> Laporan Buku Kas
       </h1>
-      <button onclick="exportPDF()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded flex gap-1 items-center">
-        <i data-lucide="download"></i> Export PDF
-      </button>
+      <div class="flex gap-2">
+        <button onclick="window.print()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex gap-1 items-center">
+          <i data-lucide="printer"></i> Print
+        </button>
+        <button onclick="exportPDF()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded flex gap-1 items-center">
+          <i data-lucide="download"></i> Export PDF
+        </button>
+      </div>
     </div>
 
     <!-- Filter -->
@@ -60,35 +88,30 @@
       </div>
     </div>
 
-    <!-- Tabel Laporan (Responsif) -->
-    <div id="laporanContainer" class="overflow-x-auto mt-4">
-      <table class="min-w-full border text-sm text-left">
-        <thead class="bg-purple-100 text-purple-700">
-          <tr>
-            <th class="p-2 border">Tanggal</th>
-            <th class="p-2 border">Keterangan</th>
-            <th class="p-2 border">Kategori</th>
-            <th class="p-2 border">Qty</th>
-            <th class="p-2 border">Harga</th>
-            <th class="p-2 border">Total</th>
-          </tr>
-        </thead>
-        <tbody id="laporanBody" class="bg-white">
-          <!-- data akan diisi oleh JS -->
-        </tbody>
-      </table>
+    <!-- Area Export PDF -->
+    <div id="laporanExport">
+      <h2 class="text-lg font-semibold text-center mt-6 mb-4">Laporan Kas Masuk dan Keluar</h2>
+      
+      <!-- Tabel Laporan -->
+      <div id="laporanContainer" class="overflow-x-auto">
+        <table class="min-w-full border text-sm text-left">
+          <thead class="bg-purple-100 text-purple-700">
+            <tr>
+              <th class="p-2 border">Tanggal</th>
+              <th class="p-2 border">Keterangan</th>
+              <th class="p-2 border">Kategori</th>
+              <th class="p-2 border">Qty</th>
+              <th class="p-2 border">Harga</th>
+              <th class="p-2 border">Total</th>
+            </tr>
+          </thead>
+          <tbody id="laporanBody" class="bg-white">
+            <!-- data akan diisi oleh JS -->
+          </tbody>
+        </table>
+      </div>
     </div>
+
   </div>
-
-  <!-- Inisialisasi ikon dan service worker -->
-  <script>
-    lucide.createIcons();
-
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(reg => console.log('Service Worker registered', reg))
-        .catch(err => console.error('Service Worker failed', err));
-    }
-  </script>
 </body>
 </html>
