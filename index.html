@@ -84,9 +84,13 @@
     <ul id="transaksiList" class="space-y-3"></ul>
   </div>
 
-  <!-- Script di akhir body agar semua elemen sudah tersedia -->
+  <!-- Script utama -->
   <script>
+    const today = new Date().toISOString().split('T')[0];
+
     document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+
       const form = document.getElementById('kasForm');
       const keteranganInput = document.getElementById('keterangan');
       const jumlahBarangInput = document.getElementById('jumlahBarang');
@@ -97,7 +101,6 @@
       const saldoDiv = document.getElementById('saldo');
       const formBtnText = document.getElementById('formBtnText');
 
-      const today = new Date().toISOString().split('T')[0];
       tanggalInput.value = today;
       tanggalInput.max = today;
 
@@ -143,17 +146,14 @@
           saldo += item.jumlah;
 
           const li = document.createElement('li');
-          li.className = `
-            p-4 rounded-lg flex justify-between items-start shadow flex-col sm:flex-row sm:items-center
-            ${item.kategori === 'masuk' ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}
-          `;
+          li.className = `p-4 rounded-lg flex justify-between items-start shadow flex-col sm:flex-row sm:items-center ${item.kategori === 'masuk' ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`;
 
           li.innerHTML = `
             <div class="mb-2 sm:mb-0">
               <div class="font-semibold text-gray-800">${item.ket}</div>
               <div class="text-sm text-gray-600">
                 ${item.kategori.toUpperCase()} • ${item.qty} × Rp ${item.harga.toLocaleString()} = Rp ${Math.abs(item.jumlah).toLocaleString()}<br>
-                <span class="text-xs text-gray-500">📅 ${item.tanggal}</span>
+                <span class="text-xs text-gray-500">🗓️ ${item.tanggal}</span>
               </div>
             </div>
             <div class="flex gap-2">
@@ -163,8 +163,7 @@
               <button onclick="hapusTransaksi(${index})" class="text-red-500 hover:text-red-700">
                 <i data-lucide="trash-2" class="w-5 h-5"></i>
               </button>
-            </div>
-          `;
+            </div>`;
 
           list.appendChild(li);
         });
@@ -200,7 +199,7 @@
         renderTransaksi();
       };
 
-      // Tombol backup
+      // Backup
       document.getElementById('backupBtn').addEventListener('click', () => {
         const data = JSON.stringify(transaksi, null, 2);
         const blob = new Blob([data], { type: 'application/json' });
@@ -214,7 +213,7 @@
         URL.revokeObjectURL(url);
       });
 
-      // Tombol import
+      // Import
       document.getElementById('importFile').addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -235,13 +234,7 @@
         reader.readAsText(file);
       });
 
-      // PWA
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('service-worker.js').then(reg => {
-          console.log('Service Worker registered:', reg);
-        });
-      }
-
+      // PWA install prompt
       let deferredPrompt;
       const installBanner = document.getElementById('installBanner');
       const installBtn = document.getElementById('installBtn');
@@ -274,6 +267,12 @@
         hideUntilDate.setMinutes(hideUntilDate.getMinutes() + 5);
         localStorage.setItem('hideInstallUntil', hideUntilDate.toISOString());
       });
+
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('service-worker.js').then(reg => {
+          console.log('Service Worker registered:', reg);
+        });
+      }
     });
   </script>
 </body>
