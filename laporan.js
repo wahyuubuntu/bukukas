@@ -49,8 +49,9 @@ function renderTable(data) {
   });
 }
 
+// ✅ FIX: Export PDF berisi judul + tabel
 function exportPDF() {
-  const el = document.getElementById('laporanContainer');
+  const el = document.getElementById('laporanExport');
   html2pdf().set({
     margin: 10,
     filename: 'laporan-kas.pdf',
