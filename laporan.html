@@ -5,56 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Laporan Buku Kas</title>
 
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#7c3aed" />
-
   <!-- Tailwind CSS -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- html2pdf -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-  <!-- html2pdf untuk Export -->
-  <script src="html2pdf.bundle.min.js"></script>
-
-  <!-- JS laporan -->
-  <script defer>
-    function exportPDF() {
-      const element = document.getElementById('laporanExport');
-      const opt = {
-        margin: 0.5,
-        filename: 'Laporan_Buku_Kas.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-      };
-
-      html2pdf().from(element).set(opt).save();
+  <!-- CSS PRINT -->
+  <style>
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #laporanExport, #laporanExport * {
+        visibility: visible;
+      }
+      #laporanExport {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
     }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      lucide.createIcons();
-    });
-
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(reg => console.log('Service Worker registered', reg))
-        .catch(err => console.error('Service Worker failed', err));
-    }
-  </script>
+  </style>
 </head>
 <body class="bg-gray-100 p-6">
-  <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow space-y-6">
-    
-    <!-- Tombol Kembali -->
-    <div class="mb-4">
-      <a href="index.html" class="inline-flex items-center text-sm text-purple-600 hover:text-purple-800 transition">
-        <i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> Kembali ke Buku Kas
-      </a>
-    </div>
 
-    <!-- Header dan Tombol Export -->
-    <div class="flex justify-between items-center flex-wrap gap-2">
+  <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow space-y-6">
+
+    <!-- Tombol -->
+    <div class="flex justify-between items-center mb-4">
       <h1 class="text-xl font-bold flex items-center gap-2 text-purple-600">
         <i data-lucide="file-text"></i> Laporan Buku Kas
       </h1>
@@ -69,7 +50,7 @@
     </div>
 
     <!-- Filter -->
-    <div class="grid sm:grid-cols-3 gap-3">
+    <div class="grid sm:grid-cols-3 gap-3 mb-4">
       <div>
         <label class="block text-sm font-medium">Tanggal Mulai</label>
         <input type="date" id="startDate" class="w-full p-2 border rounded" />
@@ -88,11 +69,15 @@
       </div>
     </div>
 
-    <!-- Area Export PDF -->
-    <div id="laporanExport">
-      <h2 class="text-lg font-semibold text-center mt-6 mb-4">Laporan Kas Masuk dan Keluar</h2>
-      
-      <!-- Tabel Laporan -->
+    <!-- Area untuk PDF dan PRINT -->
+    <div id="laporanExport" class="bg-white p-6 rounded-lg border">
+
+      <!-- ✅ JUDUL YANG WAJIB MUNCUL -->
+      <div style="text-align: center; margin-bottom: 16px;">
+        <h2 style="font-size: 1.25rem; font-weight: bold;">Laporan Kas Masuk dan Keluar</h2>
+      </div>
+
+      <!-- ✅ TABEL -->
       <div id="laporanContainer" class="overflow-x-auto">
         <table class="min-w-full border text-sm text-left">
           <thead class="bg-purple-100 text-purple-700">
@@ -106,13 +91,34 @@
             </tr>
           </thead>
           <tbody id="laporanBody" class="bg-white">
-            <!-- data akan diisi oleh JS -->
+            <!-- Data dari JS -->
           </tbody>
         </table>
       </div>
     </div>
-
   </div>
+
+  <!-- JS untuk Icon + PDF -->
+  <script>
+    function exportPDF() {
+      const element = document.getElementById('laporanExport');
+      const opt = {
+        margin: 0.5,
+        filename: 'Laporan_Buku_Kas.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+
+      html2pdf().from(element).set(opt).save();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+    });
+  </script>
+
+  <!-- JS Laporan -->
   <script src="laporan.js" defer></script>
 
 </body>
