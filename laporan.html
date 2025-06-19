@@ -34,23 +34,28 @@
 
   <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow space-y-6">
 
-    <!-- Tombol -->
-    <div class="flex justify-between items-center mb-4">
-      <h1 class="text-xl font-bold flex items-center gap-2 text-purple-600">
-        <i data-lucide="file-text"></i> Laporan Buku Kas
-      </h1>
-      <div class="flex gap-2">
-        <button onclick="window.print()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex gap-1 items-center">
+    <!-- Header + Tombol -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 print:hidden">
+      <div class="flex items-center gap-2 text-purple-600 text-xl font-bold">
+        <i data-lucide="file-text"></i>
+        <span>Laporan Buku Kas</span>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-2">
+        <a href="index.html" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded flex items-center justify-center gap-1 text-sm">
+          <i data-lucide="arrow-left"></i> Kembali
+        </a>
+        <button onclick="window.print()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center justify-center gap-1 text-sm">
           <i data-lucide="printer"></i> Print
         </button>
-        <button onclick="exportPDF()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded flex gap-1 items-center">
+        <button onclick="exportPDF()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded flex items-center justify-center gap-1 text-sm">
           <i data-lucide="download"></i> Export PDF
         </button>
       </div>
     </div>
 
     <!-- Filter -->
-    <div class="grid sm:grid-cols-3 gap-3 mb-4">
+    <div class="grid sm:grid-cols-3 gap-3 mb-4 print:hidden">
       <div>
         <label class="block text-sm font-medium">Tanggal Mulai</label>
         <input type="date" id="startDate" class="w-full p-2 border rounded" />
@@ -69,15 +74,13 @@
       </div>
     </div>
 
-    <!-- Area untuk PDF dan PRINT -->
+    <!-- Area Export (judul + tabel) -->
     <div id="laporanExport" class="bg-white p-6 rounded-lg border">
 
-      <!-- ✅ JUDUL YANG WAJIB MUNCUL -->
-      <div style="text-align: center; margin-bottom: 16px;">
-        <h2 style="font-size: 1.25rem; font-weight: bold;">Laporan Kas Masuk dan Keluar</h2>
+      <div class="text-center mb-4">
+        <h2 class="text-lg font-bold">Laporan Kas Masuk dan Keluar</h2>
       </div>
 
-      <!-- ✅ TABEL -->
       <div id="laporanContainer" class="overflow-x-auto">
         <table class="min-w-full border text-sm text-left">
           <thead class="bg-purple-100 text-purple-700">
@@ -95,10 +98,11 @@
           </tbody>
         </table>
       </div>
+
     </div>
   </div>
 
-  <!-- JS untuk Icon + PDF -->
+  <!-- Script export -->
   <script>
     function exportPDF() {
       const element = document.getElementById('laporanExport');
@@ -118,7 +122,7 @@
     });
   </script>
 
-  <!-- JS Laporan -->
+  <!-- Laporan.js -->
   <script src="laporan.js" defer></script>
 
 </body>
