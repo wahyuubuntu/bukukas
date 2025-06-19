@@ -92,10 +92,14 @@
     const installBtn = document.getElementById('installBtn');
     const closeBtn = document.getElementById('closeBanner');
 
+    const hideUntil = localStorage.getItem('hideInstallUntil');
+    const now = new Date();
+
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-      if (!localStorage.getItem('hideInstallBanner')) {
+
+      if (!hideUntil || new Date(hideUntil) < now) {
         installBanner.classList.remove('-translate-y-full');
       }
     });
@@ -114,7 +118,10 @@
 
     closeBtn.addEventListener('click', () => {
       installBanner.classList.add('-translate-y-full');
-      localStorage.setItem('hideInstallBanner', 'true');
+      // Sembunyikan selama 5 menit
+      const hideUntilDate = new Date();
+      hideUntilDate.setMinutes(hideUntilDate.getMinutes() + 5);
+      localStorage.setItem('hideInstallUntil', hideUntilDate.toISOString());
     });
   </script>
 </body>
